@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>골드제이 블로그 서포터</title>
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#/home">
+        <span class="brand-mark">GJ</span>
+        <span class="brand-name">블로그 서포터<small>골드제이의원 · dr_ponym</small></span>
+      </a>
+      <nav class="nav" id="nav"></nav>
+      <div class="sidebar-foot">
+        <div style="display:flex;align-items:flex-start;gap:8px;padding:0 4px 0 8px">
+          <p class="t-caption" id="ai-balance" style="margin:0;flex:1;color:#3b4148"></p>
+          <a class="btn btn-dark-square" href="https://platform.claude.com/dashboard" style="min-height:28px;padding:4px 10px;font-size:12px;border-radius:9999px">충전하기 ↗</a>
+        </div>
+        <button class="btn btn-green btn-sm" id="btn-ai" style="min-height:40px">⚙︎ 설정 · Claude 연결</button>
+        <button class="btn btn-ghost" id="btn-export">⬇︎ 데이터 백업 (JSON)</button>
+        <button class="btn btn-ghost" id="btn-import">⬆︎ 백업 불러오기</button>
+        <input type="file" id="file-import" accept="application/json" hidden>
+        <p class="t-caption">데이터는 이 브라우저에만 저장됩니다. 다른 PC로 옮길 땐 백업 파일을 쓰세요.<br>버전 2026-11-06 V16</p>
+      </div>
+    </aside>
+    <div class="scrim" id="scrim"></div>
+    <div class="main">
+      <header class="topbar">
+        <a class="brand" href="#/home"><span class="brand-mark">GJ</span><span class="brand-name">블로그 서포터</span></a>
+        <button class="hamburger" id="hamburger" aria-label="메뉴">☰</button>
+      </header>
+      <main id="view"></main>
+    </div>
+  </div>
+  <div id="modal-root"></div>
+  <script src="assets/data.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>
