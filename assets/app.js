@@ -191,7 +191,7 @@
   const stClass = (s) => "st-" + s.replace(/\s/g, "");
   const chip = (s) => `<span class="chip chip-dot ${stClass(s)}">${esc(s)}</span>`;
   const riskChip = (r) => `<span class="chip risk-${esc(r)}">겹침 ${esc(r)}</span>`;
-  const plainLen = (t) => t.replace(/&nbsp;/g, "").replace(/[*#>]/g, "").replace(/\s/g, "").length;
+  const plainLen = (t) => t.replace(/\r/g, "").replace(/^[ \t]*📷[^\n]*(?:\n[^\n]*\S[^\n]*)*/gm, "").replace(/^\[(가운데|캡션)\] /gm, "").replace(/&nbsp;/g, "").replace(/[*#>]/g, "").replace(/\s/g, "").length;
 
   function toast(msg) {
     const t = document.createElement("div");
@@ -211,7 +211,7 @@
     return body.replace(/\r/g, "").split("\n").map((l) => {
       l = l.replace(/\s+$/, "");
       if (l.trim() === "&nbsp;") return "";
-      return l.replace(/^#\s/, "").replace(/^\s*>\s?/, "").replace(/\*\*/g, "");
+      return l.replace(/^#\s/, "").replace(/^\s*>\s?/, "").replace(/^\[(가운데|캡션)\] /, "").replace(/\*\*/g, "");
     }).join("\n").replace(/\n{3,}/g, "\n\n");
   }
   async function copyForNaver(title, body) {
@@ -370,7 +370,10 @@
       if (/^\s*>/.test(l)) { if (photo) flush(); (quote = quote || []).push(inline(l.replace(/^\s*>\s?/, ""))); return; }
       if (/📷/.test(l)) { flush(); photo = [inline(l)]; return; }
       if (photo) { photo.push(inline(l)); return; }
-      flush(); out.push(`<p>${inline(l)}</p>`);
+      flush();
+      if (/^\[가운데\] /.test(l)) { out.push(`<p style="text-align:center">${inline(l.slice(6))}</p>`); return; }
+      if (/^\[캡션\] /.test(l)) { out.push(`<p style="text-align:center;color:#868b94;font-size:13px">${inline(l.slice(5))}</p>`); return; }
+      out.push(`<p>${inline(l)}</p>`);
     });
     flush();
     return out.join("");
@@ -924,12 +927,12 @@
         <div><div class="t-eyebrow mint-text">Draft</div><h1 class="t-h2">초안 작성</h1><p class="t-body-lg">브리프를 채우고 <b>골격 생성</b>으로 골드제이 형식의 뼈대를 만들거나, <b>Claude 프롬프트 복사</b>로 지침이 담긴 요청문을 붙여넣어 쓰세요.</p></div>
         ${itemPicker(it.id, "draft")}
       </div></section>
-      <section class="band"><div class="container grid g-main" style="align-items:start">
+      <section class="band"><div class="container wide grid g-draft" style="align-items:start">
         <div class="stack-lg">
-          <div class="field"><label style="display:flex;justify-content:space-between;align-items:center"><span>제목</span><button type="button" class="btn-link" id="d-tsug" style="font-size:13px">✦ 메인 키워드로 제목 3개 추천</button></label><input class="input" id="d-title" value="${esc(it.draftTitle || "")}" placeholder="질문 + 답 + 프로그램명 (예: 다크서클 시술, 눈밑필러 하면 좋아질까요? 원인에 따라 치료가 달라집니다 골드제이 브라이트 아이즈)">
+          <div class="field"><label style="display:flex;justify-content:space-between;align-items:center"><span>원고 <span class="hint">제목과 본문을 아래 편집 화면에서 바로 고쳐요</span></span><button type="button" class="btn-link" id="d-tsug" style="font-size:13px">✦ 메인 키워드로 제목 3개 추천</button></label><input class="input" id="d-title" value="${esc(it.draftTitle || "")}" placeholder="질문 + 답 + 프로그램명 (예: 다크서클 시술, 눈밑필러 하면 좋아질까요? 원인에 따라 치료가 달라집니다 골드제이 브라이트 아이즈)">
             <div class="title-opts" id="d-topts">${titleOpts(it)}</div></div>
           <div class="field">
-            <label style="display:flex;justify-content:space-between"><span>본문 <span class="hint">&amp;nbsp; = 빈 줄 · **굵게** · &gt; 인용구 소제목 · 📷 사진 자리</span></span><span class="hint" id="d-count"></span></label>
+            <label style="display:flex;justify-content:space-between"><span class="hint">드래그해서 굵게·인용구·가운데 · 텍스트 버튼으로 네이버 형식 원문 보기</span><span class="hint" id="d-count"></span></label>
             <textarea class="textarea editor mono" id="d-body" placeholder="골격 생성을 누르거나 원고를 붙여넣으세요.">${esc(it.draft || "")}</textarea>
           </div>
           <div class="btn-row even">
@@ -987,15 +990,15 @@
         <div><div class="t-eyebrow mint-text">Draft review</div><h1 class="t-h2">초안 검수</h1><p class="t-body-lg">원고를 고치면 바로 다시 검사해요. 자동 검사는 규칙 기반이라, 아래 수동 체크리스트로 사실성·중복을 꼭 함께 확인하세요.</p></div>
         ${itemPicker(it ? it.id : "", "review")}
       </div></section>
-      <section class="band"><div class="container grid g-2" style="align-items:start">
-        <div class="stack-lg">
+      <section class="band"><div class="container wide grid g-review" style="align-items:start">
+        <div class="stack-lg review-side">
           <div class="card-dark" style="display:flex;gap:24px;align-items:center" id="r-summary"></div>
           <div class="card"><div id="r-checks"></div></div>
           ${it ? `<div class="card manual"><h3 class="t-h4">게시 전 수동 체크리스트</h3><div class="mt-lg">${MANUAL.map(([k, l]) => `<label><input type="checkbox" data-man="${k}" ${(it.manual || {})[k] ? "checked" : ""}>${l}</label>`).join("")}</div>
             <div class="btn-row mt-lg"><button class="btn btn-primary" id="r-pass">검수 완료 · 저장</button><button class="btn btn-ghost" id="r-done">발행 완료로 표시</button></div></div>` : ""}
         </div>
         <div class="stack-lg">
-          <div class="seg" id="r-tab"><button class="on" data-tab="edit">원고 편집</button><button data-tab="prev">모바일 미리보기</button></div>
+          <div class="seg" id="r-tab" hidden><button class="on" data-tab="edit">원고 편집</button><button data-tab="prev">모바일 미리보기</button></div>
           <div id="r-edit" class="stack">
             <input class="input" id="r-title" value="${esc(title)}" placeholder="제목">
             <textarea class="textarea editor mono" id="r-body" placeholder="원고를 붙여넣으세요.">${esc(body)}</textarea>
@@ -1117,8 +1120,10 @@
       $("#q-add").onclick = add;
     }
 
+    const edAsk = () => (aiCfg().key ? (prompt, onText) => aiWrite(prompt, onText).then((x) => { renderBalance(); return x; }) : null);
     if (r.name === "draft" && r.id) {
       const it = byId(r.id); if (!it) return;
+      window.GJEditor.mount({ body: $("#d-body"), title: $("#d-title"), titlePlaceholder: "제목 (질문 + 답 + 프로그램명)", ask: edAsk(), matchHeight: () => $(".g-draft > .card") });
       const count = () => { const n = plainLen($("#d-body").value); const el = $("#d-count"); el.textContent = `공백 제외 ${n.toLocaleString()}자 · 목표 ${LEN_MIN.toLocaleString()}~${LEN_MAX.toLocaleString()}자${n && n < LEN_MIN ? ` (${(LEN_MIN - n).toLocaleString()}자 더 필요)` : ""}`; el.style.color = n >= LEN_MIN && n <= LEN_MAX ? "#00a070" : n ? "#b4232a" : ""; el.style.fontWeight = "700"; };
       count(); $("#d-body").addEventListener("input", count);
       const collect = () => {
@@ -1220,6 +1225,7 @@
 
     if (r.name === "review") {
       const it = r.id ? byId(r.id) : null;
+      window.GJEditor.mount({ body: $("#r-body"), title: $("#r-title"), titlePlaceholder: "제목", ask: edAsk(), matchHeight: () => $(".review-side"), sameAsDraft: true });
       const run = () => {
         const title = $("#r-title").value, body = $("#r-body").value;
         if (!it) ui.reviewFree = { title, body };
