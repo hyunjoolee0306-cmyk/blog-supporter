@@ -344,7 +344,7 @@
       if (!document.body.contains(host)) { window.removeEventListener("resize", fit); if (ro) ro.disconnect(); return; }
       const side = opts.matchHeight && opts.matchHeight();
       const col = host.closest(".stack-lg") || host.parentNode;
-      if (!side || window.innerWidth < 1200) { main.style.height = Math.max(480, Math.round(window.innerHeight * 0.72)) + "px"; return; }
+      if (!side || window.innerWidth < 1200) { main.style.height = Math.max(420, Math.round(window.innerHeight - (window.innerWidth < 768 ? 150 : 200))) + "px"; return; }
       const below = col.getBoundingClientRect().bottom - host.getBoundingClientRect().bottom;
       let h = side.getBoundingClientRect().bottom - main.getBoundingClientRect().top - below;
       if (opts.sameAsDraft) {

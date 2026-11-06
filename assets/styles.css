@@ -454,7 +454,7 @@ hr.sep { border: 0; border-top: 1px solid var(--hairline); margin: var(--s-lg) 0
 .container.wide { max-width: 1560px; }
 .g-draft { grid-template-columns: minmax(0, 1fr) 400px; }
 .g-review { grid-template-columns: 400px minmax(0, 1fr); }
-@media (max-width: 1199px) { .g-draft, .g-review { grid-template-columns: 1fr; } .review-side { order: 2; } }
+@media (max-width: 1199px) { .g-draft, .g-review { grid-template-columns: minmax(0, 1fr); } .review-side { order: 2; } }
 
 /* ---------- 원고 편집기 (네이버 스마트에디터 느낌) ---------- */
 .ne { border: 1px solid var(--hairline); border-radius: var(--r-md); background: #f3f4f5; overflow: clip; }
@@ -517,3 +517,42 @@ hr.sep { border: 0; border-top: 1px solid var(--hairline); margin: var(--s-lg) 0
 [hidden] { display: none !important; }
 
 @media (min-width: 1200px) { .ne-sticky { position: sticky; top: 24px; } }
+
+/* ---------- 휴대폰 최적화 (V20) ---------- */
+@media (max-width: 767px) {
+  /* iOS에서 입력칸 누를 때 화면이 확대되지 않게 16px */
+  input, textarea, select { font-size: 16px !important; }
+  /* 원고 편집기: 회색 여백을 줄여 글 폭을 넓게 */
+  .ne { border-radius: 10px; }
+  .ne-wrap { padding: 0; background: #fff; }
+  .ne-paper { border: 0; padding: 20px 16px 40px; max-width: none; }
+  .ne.mobile .ne-paper { padding: 20px 16px 40px; border-radius: 0; max-width: none; }
+  .ne-title { font-size: 21px; padding-bottom: 16px; margin-bottom: 20px; }
+  .ne-ed { font-size: 16px; min-height: 300px; }
+  .ne-ed blockquote.quote { font-size: 17px; padding: 22px 4px; }
+  .ne-ed hr { margin: 20px 20%; }
+  .ne-foot { padding: 0 16px 12px; }
+  .ne-tool { min-width: 52px; }
+  [data-act="mobile"] { display: none; }
+  .ne-panel { max-height: 80%; border-radius: 16px 16px 0 0; }
+  /* 버튼 줄: 손가락으로 누르기 쉽게 한 줄씩 */
+  .btn-row.even { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .btn-row.even > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+  .btn-row.even > .btn { width: 100%; }
+  .side-actions .btn { min-width: 0; padding-left: 10px; padding-right: 10px; }
+  /* 모달은 아래에서 올라오는 시트 */
+  .modal-bg { place-items: end stretch; padding: 0; }
+  .modal { width: 100%; max-height: 92vh; border-radius: 20px 20px 0 0; padding: var(--s-lg) var(--s-md) calc(var(--s-lg) + env(safe-area-inset-bottom)); }
+  .modal .btn-row { flex-wrap: wrap; }
+  .modal .btn-row > .btn { flex: 1 1 auto; }
+  /* 필터 칩은 가로로 넘기기 */
+  .fchips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-right: calc(-1 * var(--s-md)); padding-right: var(--s-md); }
+  .fchips .fchip { flex: none; }
+  .t-h1, h1 { word-break: keep-all; }
+  /* 초안 작성 머리줄: 긴 안내문은 숨기고 버튼·글자 수만 */
+  .g-draft .field > label > span > .hint, .g-draft .field > label > span.hint:not(#d-count) { display: none; }
+  .g-draft .field > label { gap: 8px; }
+  .g-draft #d-tsug { white-space: nowrap; }
+  .src-box summary .hint { font-size: 12px; }
+  .src-box summary { flex-wrap: nowrap; } .src-box summary > span { white-space: nowrap; }
+}
