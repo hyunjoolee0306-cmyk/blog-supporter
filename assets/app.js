@@ -77,7 +77,7 @@
     "차분한 진료 설명": "2026년 기본. “안녕하세요. 금손닥터 이현주원장입니다.” 이모티콘 거의 없음",
     "친근한 말투": "기존 스타일. “안녕하세요 :) 티 안나게 예뻐지게 하는 금손닥터…” ^^ :) 가벼운 유머 허용",
   };
-  const LEN_MIN = 2500, LEN_MAX = 3000;
+  const LEN_MIN = 2000, LEN_MAX = 3500;
   const CATEGORIES = ["보톡스 필러", "리프팅", "스킨부스터", "여드름 흉터", "피부질환", "피부관리 수액", "진료실 이야기", "비만", "기타 의학정보", "시술전후", "색소"];
   const RISKS = ["낮음", "중간", "높음"];
   const PROGRAMS = ["브라이트 아이즈", "터치업키스", "웜업 써마지", "트리플 글로우", "앵커 리프팅", "스캔 울쎄라"];
@@ -284,7 +284,7 @@
     // 분량
     const len = plainLen(body.replace(/^#\s.*$/m, ""));
     let ls = "pass";
-    if (len < 2100 || len > 4500) ls = "fail"; else if (len < LEN_MIN || len > LEN_MAX) ls = "warn";
+    if (len < 1500 || len > 4500) ls = "fail"; else if (len < LEN_MIN || len > LEN_MAX) ls = "warn";
     add({ group: "구성", t: `분량 ${len.toLocaleString()}자 (공백 제외)`, d: `목표 ${LEN_MIN.toLocaleString()}~${LEN_MAX.toLocaleString()}자 (평소 작성 분량)${len < LEN_MIN ? ` · ${(LEN_MIN - len).toLocaleString()}자 더 필요` : ""}`, s: ls });
 
     // 도입
@@ -535,6 +535,12 @@
       "",
       "[스타일 프로필]",
       SEED.styleProfile,
+      "",
+      "[실제 원고 예시 — 골드제이 블로그에 실제로 올라간 글에서 그대로 옮긴 단락]",
+      "- 말투, 문장 길이, 줄바꿈 호흡, 굵은 글씨 쓰는 위치, 환자 질문 인용 방식을 이 예시에 맞춘다.",
+      "- 예시의 내용·문장을 그대로 옮기지 않는다. 주제가 달라도 같은 사람이 쓴 글처럼 읽히게 한다.",
+      "",
+      SEED.styleSamples || "",
     ].join("\n");
   }
 
